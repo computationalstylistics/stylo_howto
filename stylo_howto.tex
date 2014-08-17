@@ -1,6 +1,6 @@
 
 
-% 2014/07/27
+% 2014/08/17
 
 
 \documentclass[11pt,a4paper]{article}
@@ -53,7 +53,7 @@
 
 
 
-\title{{\tt stylo}: a package for stylometric analyses}
+\title{{\tt `Stylo'}: a package for stylometric analyses}
 
 \author{Maciej Eder\\ {\footnotesize Pedagogical Univ. of Kraków}
     \and Jan Rybicki\\ {\footnotesize Jagiellonian University}
@@ -77,7 +77,7 @@
 
 \hrule
 \begin{abstract}
-The \code{stylo} package (Eder et al. 2013) provides
+The \code{`Stylo'} package (Eder et al. 2013) provides
 easy-to-use implementations of various established analyses in the
 field of computational stylistics, including non-traditional authorship
 attribution, genre recognition, style development (``stylochronometry''),
@@ -1556,11 +1556,12 @@ function for better discrimination between two groups of texts.
 
 \subsection{Network analysis support}
 
-The package ``stylo'' does not produce any networks, however, it does generate
-tables of edges/nodes (or, edges alone) which can be loaded into Gephi 
-(https://gephi.org). To get such a table, invoke the function \code{stylo()}
-with an argument \code{network=TRUE}, and optionally with some other arguments,
-as listed below. E.g.:
+The package ``stylo'' does not produce any networks {\it per se}, however, 
+it does generate tables of edges/nodes (or, edges alone), using two Eder's 
+algorightms of establishing connections between the nodes (Eder, forthcoming). 
+The table can be loaded into Gephi (https://gephi.org). To get such a table, 
+invoke the function \code{stylo()} with an argument \code{network=TRUE}, 
+and optionally with some other arguments, as listed below. E.g.:
 
 
 \medskip
@@ -1589,7 +1590,18 @@ immaterial. (Default: FALSE).
   \caption{124 Greek texts represented as connected nodes of a network}
 \end{figure}
 
-Network analysis plots might be useful for visualizing textual relations in large datasets. Particular texts can be represented as nodes of a network, and their explicit relations as links between these nodes (Fig. 8). The procedure of linking is twofold (details: Eder, forthcoming). One of the involved algorithms computes the distances between analyzed texts, and establishes, for every single node, a strong connection to its nearest neighbor (i.e. the most similar text), and weaker connections to the 1st and the 2nd runner-up (i.e. two texts that get ranked immediately after the nearest neighbor). The second algorithm performs a large number of tests for similarity with different number of features to be analyzed (e.g. 100, 200, 300, ..., 1,000 MFWs). Finally, all the connections produced in particular “snapshots” are added, resulting in a consensus network. 
+Network analysis plots might be useful for visualizing textual relations 
+in large datasets. Particular texts can be represented as nodes of a network, 
+and their explicit relations as links between these nodes (Fig. 8). 
+The procedure of linking is twofold (details: Eder, forthcoming). 
+One of the involved algorithms computes the distances between analyzed texts, 
+and establishes, for every single node, a strong connection to its nearest 
+neighbor (i.e. the most similar text), and weaker connections to the 1st and 
+the 2nd runner-up (i.e. two texts that get ranked immediately after the 
+nearest neighbor). The second algorithm performs a large number of tests 
+for similarity with different number of features to be analyzed 
+(e.g. 100, 200, 300, ..., 1,000 MFWs). Finally, all the connections produced 
+in particular “snapshots” are added, resulting in a consensus network. 
 
 
 
@@ -1807,7 +1819,7 @@ for(current.start.point in where.to.start) \{
 
     #############
     # CORE CODE:
-    # in each iteration, 'stylo' will be launched in batch mode
+    # in each iteration, `stylo' will be launched in batch mode
     # the option "start.at" will be incremented
     stylo(gui = FALSE,
           display.on.screen = FALSE,
