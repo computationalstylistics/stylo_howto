@@ -1,6 +1,13 @@
 
 
-% 2014/08/17
+% 2015/11/7
+
+
+% new features:
+% custom distances
+% data(galbraith), .....
+
+
 
 
 \documentclass[11pt,a4paper]{article}
@@ -88,7 +95,9 @@ Addtionally, a number of supervised machine-learning methods are available
 via the function \code{classify()} (Delta, support vector machines,
 naive Bayes, \textit{k}-nearest neighbors, nearest shrunken centroids). The
 \code{rolling.delta()} function analyses collaborative works and
-tries to determine the authorship of fragments extracted from them.
+tries to determine the authorship of fragments extracted from them. 
+The function \code{rolling.classify()} offers a more flexible interface
+to sequential classification of collaborative works.
 The \code{oppose()} function performs a contrastive analysis between
 two given sets of texts: among other things, it generates lists of words 
 significantly \emph{preferred} and \emph{avoided} by one or more authors 
@@ -102,7 +111,7 @@ in comparison to the texts by another author (or a set of them).
 \begin{abstract}
 \noindent stylometry, computational stylistics, authorship attribution,
 cluster analysis, dendrogram, bootstrap consensus trees, PCA, MDS,
-\textit{k}-NN, SVM, NSC, naive Bayes, Delta, Zeta 
+\textit{k}-NN, SVM, NSC, naive Bayes, Delta, Zeta, rolling stylometry
 \end{abstract}
 
 \bigskip
@@ -234,7 +243,8 @@ over the following functions:
   \item \code{stylo()}
   \item \code{classify()} 
   \item \code{oppose()} 
-  \item \code{rolling.delta()} 
+  \item \code{rolling.delta()}
+  \item \code{rolling.classify()}
 \end{itemize}
 
 The next sections of this manual describe these four functions together
@@ -253,16 +263,36 @@ your own scripts and functions. These include:
   \item \code{define.plot.area} 
   \item \code{delete.markup}
   \item \code{delete.stop.words}
-  \item \code{culling}  
+  \item \code{dist.argamon}
+  \item \code{dist.cosine}
+  \item \code{dist.delta}
+  \item \code{dist.eder}
+  \item \code{dist.simple}
+  \item \code{draw.polygons}
   \item \code{gui.classify} 
+  \item \code{gui.oppose}
   \item \code{gui.stylo} 
   \item \code{load.corpus.and.parse} 
   \item \code{load.corpus} 
+  \item \code{make.frequency.list}
   \item \code{make.ngrams} 
   \item \code{make.samples} 
   \item \code{make.table.of.frequencies} 
+  \item \code{parse.corpus}
+  \item \code{parse.pos.tags}
+  \item \code{perform.culling}  
+  \item \code{perform.delta}
+  \item \code{perform.knn}
+  \item \code{perform.naivebayes}
+  \item \code{perform.nsc}
+  \item \code{perform.svm}
+%  \item \code{print.stylo.corpus}
+%  \item \code{print.stylo.data}
+%  \item \code{print.stylo.results}
   \item \code{stylo.default.settings} 
   \item \code{stylo.pronouns} 
+%  \item \code{summary.stylo.corpus}
+%  \item \code{summary.stylo.results}
   \item \code{txt.to.features} 
   \item \code{txt.to.words.ext} 
   \item \code{txt.to.words} 
@@ -801,7 +831,7 @@ the measures implemented in this function is pending. The available
 distance measures are as follows:\margin{distance.measure=}
 
 \begin{itemize}
-\item Euclidean Distance: basic and the most ``natural''.\margin{"EU"}
+\item Euclidean Distance: basic and the most ``natural''.\margin{"dist.euclidean"}
 It is an obvious choice when your variables are similarly distributed.
 However, since word distributions are not similar at any rate (e.g.
 compare the huge difference between the frequencies of ``the'' and ``dactyloscopy''),
@@ -826,13 +856,13 @@ where: \\
  $B_{i}=$ the frequency of a given word $i$ in the text $B$. \\
 
 
-\item \noindent Manhattan Distance: obvious and well documented.\margin{"MH"}
+\item \noindent Manhattan Distance: obvious and well documented.\margin{"dist.manhattan"}
 It shares the pros and cons of Euclidean Distance. 
 \[
 \delta_{(AB)}=\sum_{i=1}^{n}\left\vert A_{i}-B_{i}\right\vert 
 \]
 
-\item Classic Delta as introduced by Burrows (2002).\margin{"CD"}
+\item Classic Delta as introduced by Burrows (2002).\margin{"dist.delta"}
 Since this measure relies on \textit{z}-scores -- i.e. normalized word frequencies
 -- it is dependent on the number of texts analyzed and on a balance
 between these texts: if a corpus contains, say, a large nuber of plays
@@ -858,14 +888,14 @@ algebraically:
 
 
 \item Argamon's Linear Delta, or Euclidean distance applied to normalized
-(\textit{z}-scored) word frequencies (Argamon, 2008).\margin{"AL"}
+(\textit{z}-scored) word frequencies (Argamon, 2008).\margin{"dist.argamon"}
 The distance is sensitive to the number of texts in a corpus. 
 \[
 \Delta_{(AB)}=\frac{1}{n}\sum_{i=1}^{n}\sqrt{\left\vert \frac{(A_{i})^{2}-(B_{i})^{2}}{\sigma_{i}}\right\vert }
 \]
 
-\item Eder's Delta: it is a modification of standard Burrows's distance;\margin{"ED"}
-it slightly increases the weiths of frequent words and rescales less
+\item Eder's Delta: it is a modification of standard Burrows's distance;\margin{"dist.eder"}
+it slightly increases the weights of frequent words and rescales less
 frequent ones in order to suppress discriminative strength of some
 random unfrequent words. The distance was meant to be used with highly
 inflected languages. It is sensitive to the number of texts in a corpus.
@@ -875,7 +905,7 @@ inflected languages. It is sensitive to the number of texts in a corpus.
 
 \item Eder's Simple: a type of normalization as simple as can be (independent
 on the size of the corpus), intended to convert the implications of
-Zipf's law.\margin{"ES"} The normalization
+Zipf's law.\margin{"dist.simple"} The normalization
 used in this distance is so obvious and so widely-spread in exact
 sciences that naming it ``Eder's Simple Distance'' is an abuse, so to
 speak. 
@@ -883,7 +913,7 @@ speak.
 \delta_{(AB)}=\sum_{i=1}^{n}\left\vert \sqrt{A_{i}}-\sqrt{B_{i}}\right\vert 
 \]
 
-\item Canberra Distance: sometimes amazingly good.\margin{"CB"}
+\item Canberra Distance: sometimes amazingly good.\margin{"dist.canberra"}
 It is very sensitive to differences in rare vocabulary usage among
 authors. On the other hand, this can be a disadvantage, since sensitiveness
 to minute differences in word occurrences also means significant sensitiveness
@@ -893,16 +923,13 @@ to the number of words (features) analyzed.
 \delta_{(AB)}=\sum_{i=1}^{n}\frac{\left\vert A_{i}-B_{i}\right\vert }{\left\vert A_{i}\right\vert +\left\vert B_{i}\right\vert }
 \]
 
-\item Cosine Distance: not implemented yet.\margin{[TBD]}
-
+\item Cosine Distance: a classical measure, introduced to this package 
+quite recently.\margin{"dist.cosine"}
 
 \[
 \cos(\theta)=\frac{A\cdot B}{\|A\|\|B\|}=\frac{\sum\limits _{i=1}^{n}{A_{i}\times B_{i}}}{\sqrt{\sum\limits _{i=1}^{n}{(A_{i})^{2}}}\times\sqrt{\sum\limits _{i=1}^{n}{(A_{i})^{2}}}}
 \]
 
-
-
-%%% cosine distance in R:      x %*% y / sqrt(x %*% x  *  y %*% y)
 
 
 \end{itemize}
@@ -1335,7 +1362,7 @@ the number of final ranking candidates to be displayed (at least 1).
 This option works for Delta only. 
 \end{itemize}
 
-\section{rolling.delta()}
+\section{rolling.delta(), rolling.classify()}
 
 The procedure “Rolling Delta”, supported by the function \code{rolling.delta()}
 is reminiscent of a number of earlier applications of the metric (e.g.
@@ -1394,7 +1421,7 @@ You will need two subfolders in your working directory: \code{primary\underscore
 should contain the test texts: the individual writings by each of
 the authors who collaborated on the test text -- the latter goes into
 the \code{secondary\underscore{}set} subfolder (once again, the names are case-sensitive).
-In the pilot study for this method (Rybicki et al., 2013), the primary
+In the pilot study for this method (Rybicki et al., 2014), the primary
 set was composed of individual writings by Joseph Conrad and individual
 writings by Ford Madox Ford, such as, respectively, \emph{The Heart
 of Darkness} and \emph{The Good Soldier}; the secondary set only contained
@@ -1956,10 +1983,9 @@ Koppel, M., Schler, J. and Argamon, S. (2009). Computational methods
 in authorship attribution. \textit{Journal of the American Society
 for Information Science and Technology}, \textbf{60}(1): 9--26.
 
-Rybicki, J., Kestemont, M. and Hoover D. (2013). Collaborative authorship:
-Conrad, Ford and rolling delta. In \textit{Digital Humanities 2013:
-Conference Abstracts}. University of Nebraska-Lincoln, Lincoln, NE,
-pp. 368--71.
+Rybicki, J., Kestemont, M. and Hoover D. (2014). Collaborative authorship:
+Conrad, Ford and rolling delta. \textit{Literary and Linguistic Computing},
+\textbf{29}(3): 422--31.
 
 Stamatatos, E. (2009). A survey of modern authorship attribution methods.
 \textit{Journal of the American Society for Information Science and
