@@ -29,6 +29,7 @@
   pdfkeywords={computational stylistics,} {stylometry,} {authorship attribution},
   colorlinks=true,        % false: boxed links; true: colored links
   linkcolor=black,        % color of internal links
+  linktoc=all,            % both sections and subsections linked
   citecolor=black,        % color of links to bibliography
   filecolor=black,        % color of file links
   urlcolor=black          % color of external links
@@ -53,6 +54,8 @@
 \def\underscore{\raisebox{-.8ex}{-}}
 \def\margin#1{\marginpar{\textcolor{blue}{\footnotesize\tt #1}}}
 
+%\usepackage{marginnote}
+%\def\margin#1{\marginnote{\textcolor{blue}{\footnotesize\tt #1}}}
 
 \def\code#1{{\tt #1}}
 
@@ -84,7 +87,7 @@
 
 \hrule
 \begin{abstract}
-The \code{`Stylo'} package (Eder et al. 2013) provides
+The \code{`stylo'} package (Eder et al. 2013) provides
 easy-to-use implementations of various established analyses in the
 field of computational stylistics, including non-traditional authorship
 attribution, genre recognition, style development (``stylochronometry''),
@@ -313,6 +316,23 @@ be copy-pasted into an active R console. (Don't be afraid of the lines
 `\code{\#\#~Not run}' -- they prevent R to run some automatic
 checks on interactive functions; you can use these examples safely).
 
+Apart from functions, the package \code{`stylo'} (ver. >0.6.1) contains 
+three datasets that can be used to start playing with stylometric methods 
+without any actual texts. The datasets are as follows:
+
+\begin{itemize}
+  \item \code{novels}
+  \item \code{galbraith}
+  \item \code{lee}
+\end{itemize}
+
+The first dataset contains 9 full-size novels by Jane Austen and 
+the Bront\"e sisters. The second and the third set contains computed
+tables of word frequencies for 26 and 28, resp., contemporary novels 
+that for copyright-related reasons could not be made available in 
+their original format. A detailed description of the datasets 
+can be retrieved via \code{help(novels)}, \code{help(galbraith)}
+and \code{help(lee)}. 
 
 \section{stylo()}
 
@@ -419,7 +439,20 @@ text format, or \textit{all} in HTML, or \textit{all} in TEI-XML (the
 latter two options have not been extensively tested so far, and should
 be used carefully). 
 
-A concise remark about possible encoding issues should also be added. If the operating system you use is Linux or Mac, you just need to make sure the texts are all in UTF-8 (aka Unicode). If your operating system is Windows, you have two options. Firstly, you might want to save all the texts in ANSI codepage, but you have to tread carefully if your machine runs one charset, say, Central European (1250) and your texts are in the Western European codepage (1252); in this respect, for instance, French is notoriously difficult (\emph{nous sommes vraiement désolés}). Alternatively, you can convert your texts into Unicode (a variety of freeware converters are available on the internet), and to use an appropriate encoding option when launching the function, say, \code{stylo()} either by clicking the ``UTF-8'' button on GUI (beginners), or passing the argument \code{encoding = "UTF-8"} directly to the function (advanced users).
+A concise remark about possible encoding issues should also be added. 
+If the operating system you use is Linux or Mac, you just need to make 
+sure the texts are all in UTF-8 (aka Unicode). If your operating system 
+is Windows, you have two options. Firstly, you might want to save all 
+the texts in ANSI codepage, but you have to tread carefully if your 
+machine runs one charset, say, Central European (1250) and your texts 
+are in the Western European codepage (1252); in this respect, for 
+instance, French is notoriously difficult (\emph{nous sommes vraiement 
+désolés}). Alternatively, you can convert your texts into Unicode 
+(a variety of freeware converters are available on the internet), 
+and to use an appropriate encoding option when launching the function, 
+say, \code{stylo()} either by clicking the ``UTF-8'' button on GUI 
+(beginners), or passing the argument \code{encoding = "UTF-8"} directly 
+to the function (advanced users).
 
 
 
@@ -575,6 +608,13 @@ character signs in Latin texts.\margin{"Latin"}
 \item Latin.corr: since some editions do not distinguish between “v” and
 “u”, this option provides a consistent conversion of both characters
 to “u” in each text.\margin{"Latin.corr"} 
+
+\item CJK: Chinese, Japanese and Korean scripts, provided that the input
+data is encoded in Unicode.\margin{"CJK"}
+
+\item Other: non-Latin scripts: Hebrew, Arabic, Cyryllic, Coptic, Greek,
+Georgian, Latin phonetic, so far.  Make sure your input data is in 
+Unicode!\margin{"Other"}
 \end{itemize}
 
 Please do note that for all other languages, apostrophes do \emph{not}
@@ -644,8 +684,9 @@ This is where you specify the size of the most-frequent-word list
 that will be used for your analysis. Actually, the name is slightly
 misleading, since you are not at the mercy of ``most frequent \emph{words}''
 only. You can use most frequent word pairs (bigrams), character sequences,
-etc. We keep the name ``MFW'' for historical reasons (?); or there was
-no-one around to propose a better solution.
+etc. We keep the name ``MFW'' because... Well, we don't really remember
+why we keep it; probably, there was no-one around to propose a better 
+solution.
 
 \begin{itemize}
 \item Minimum: this setting determines how many words (or features) from
@@ -658,7 +699,7 @@ on the 100 most frequent words (features) in the entire corpus.\margin{mfw.min=}
 word frequency list for the entire corpus will be used in your analysis
 in the last (and possibly, only) run of the function. Thus, a setting
 of 1000 results in your (final) experiment being conducted on 1000
-most frequent words in the entire corpus.\margin{mfw.max=}\margin{<integer>}
+most frequent words in the entire corpus.\margin{mfw.max=\\<integer>}
 (This parameter setting is especially important when working with
 the bootstrap consensus trees in \code{stylo()}, a procedure which
 involves running several analyses in a row. See immediately below
@@ -734,7 +775,7 @@ of pronouns for that language inside the
 script.\margin{corpus.lang=}\margin{"English"}\margin{"Dutch"}\margin{...}
 Advanced users can use this part of the tool to remove any words they
 want. So far, we have pronoun lists for English, Dutch, Polish, Latin,
-French, German, Italian, and Hungarian. 
+French, German, Spanish, Italian, and Hungarian. 
 \end{itemize}
 
 N.B. As had been mentioned above, for all statistical procedures (see
@@ -872,12 +913,12 @@ results might by biased.
 \Delta_{(AB)}=\frac{1}{n}\sum_{i=1}^{n}\left\vert \frac{A_{i}-\mu_{i}}{\sigma_{i}}-\frac{B_{i}-\mu_{i}}{\sigma_{i}}\right\vert 
 \]
 where: \\
- $n=$ the number of MFWs (most frequent words), \\
+ $n=$ the number of MFWs (most frequent words or other features), \\
  $A,B=$ texts being compared, \\
- $A_{i}=$ the frequency of a given word $i$ in the text $A$, \\
- $B_{i}=$ the frequency of a given word $i$ in the text $B$, \\
- $\mu_{i}=$ mean frequency of a given word in the corpus, \\
- $\sigma_{i}=$ standard deviation of frequencies of a given word.
+ $A_{i}=$ the frequency of a given feature $i$ in the text $A$, \\
+ $B_{i}=$ the frequency of a given feature $i$ in the text $B$, \\
+ $\mu_{i}=$ mean frequency of a given feature in the corpus, \\
+ $\sigma_{i}=$ standard deviation of frequencies of a given feature.
 
 
 \noindent Argamon (2008) showed that the above formula can be simplified
@@ -902,6 +943,8 @@ inflected languages. It is sensitive to the number of texts in a corpus.
 \[
 \Delta_{(AB)}=\frac{1}{n}\sum_{i=1}^{n}\left(\left\vert \frac{A_{i}-B_{i}}{\sigma_{i}}\right\vert \times\frac{n-n_{i}+1}{n}\right)
 \]
+where: \\
+ $n_{i}=$ the position of a given feature on a frequency list (i.e. its rank).
 
 \item Eder's Simple: a type of normalization as simple as can be (independent
 on the size of the corpus), intended to convert the implications of
@@ -930,20 +973,24 @@ quite recently.\margin{"dist.cosine"}
 \cos(\theta)=\frac{A\cdot B}{\|A\|\|B\|}=\frac{\sum\limits _{i=1}^{n}{A_{i}\times B_{i}}}{\sqrt{\sum\limits _{i=1}^{n}{(A_{i})^{2}}}\times\sqrt{\sum\limits _{i=1}^{n}{(A_{i})^{2}}}}
 \]
 
-
+\item It is also possible to use any custom distance measure. This option is 
+discussed below, in the section \ref{custom_distances}.
 
 \end{itemize}
 
 \subsubsection{Sampling}
 
-When the default setting of ``No sampling'' is checked, each of
+When the default setting of ``No sampling'' is 
+checked\margin{sampling=}\margin{"no.sampling"}, each of
 the texts in its entirety is treated as a single sample. The second
-option, that of ``Normal sampling'', performs the analysis on equal-sized
+option, that of ``Normal sampling''\margin{"normal.sampling"}, 
+performs the analysis on equal-sized
 consecutive sections of each text, and the size is determined by the
-setting immediately below. Eder (2014) suggests that even better attribution
-results can be achieved with ``Random sampling'', where samples
-are made up of words each randomly selected from anywhere in the text
-(``bag of words''); here, too, the sample size must be set below.
+setting immediately below. Eder (2015) suggests that even better attribution
+results can be achieved with ``Random sampling''\margin{"random.sampling"}, 
+where samples are made up of words each randomly selected from anywhere 
+in the text (``bag of words'');\margin{sample.size=}\margin{<integer>} here, 
+too, the sample size must be set below.
 
 \begin{figure}
   \centering
@@ -1044,7 +1091,10 @@ a black \& white graph. No file naming convention is required with this option.
 is checked, the graphs will contain a main (top) title (based on the
 name of your folder and your choice of the statistics option) and
 a subtitle (bottom) showing the distance metric which you selected,
-as well as the MFW, Culling, Feature and Consensus settings. 
+as well as the MFW, Culling, Feature and Consensus settings.%
+\margin{custom.graph.title=}\margin{"Any text"}
+If you don't want to have the title decided automatically, you need to 
+pass an argument \code{custom.graph.title}.
 \end{itemize}
 
 
@@ -1112,13 +1162,13 @@ entire name). Potentially useful when dealing with lots of samples.
 
 \begin{itemize}
 \item Horizontal CA tree:\margin{dendrogram.lay-\\
-out.horizontal=} select to have your cluster analysis graph oriented
-horizontally. Probably the better option for clarity, especially if
-there are a lot of samples to fit on one dendrogram. 
+out.horizontal=}\margin{TRUE|FALSE} select to have your cluster 
+analysis graph oriented horizontally. Probably the better option for 
+clarity, especially if there are a lot of samples to fit on one dendrogram. 
 
 \item Save distance table:\margin{save.distan-\\
-ce.tables=} save final distance table(s) in separate text file(s).
-In most cases, you will not need to use this option. 
+ce.tables=}\margin{TRUE|FALSE} save final distance table(s) in separate 
+text file(s). In most cases, you will not need to use this option. 
 
 \item Save features:\margin{save.analy-\\
 zed.features=}\margin{TRUE|FALSE} save final feature (word, n-gram) 
@@ -1127,10 +1177,10 @@ to have more control over the experiment: if you feel that your results
 are suspicious or too good to be true, you can open the generated file 
 and check the features used. 
 
-\item Save frequencies:\margin{save.analyzed.freqs=} this option gives
-you even more control: you can inspect frequencies of each word across
-the whole corpus. Switching this option saves frequency table(s) in
-separate text file(s). 
+\item Save frequencies:\margin{save.analyzed.freqs=}\margin{TRUE|FALSE} 
+this option gives you even more control: you can inspect frequencies 
+of each word across the whole corpus. Switching this option saves 
+frequency table(s) in separate text file(s). 
 
 \item Dump samples:\margin{dump.samples=}\margin{TRUE|FALSE} if you
 still feel that your experiment in not supervised enough, you migth
@@ -1649,7 +1699,6 @@ in particular “snapshots” are added, resulting in a consensus network.
 \item \code{cv.folds}
 \item \code{encoding}
 \item \code{relative.frequencies}
-% cjk
 \end{itemize}
 
 
@@ -1670,16 +1719,16 @@ The datasets that can be piped into \code{stylo()} and \code{classify()} from ot
      # preparing a training corpus
      txt1 = c("now", "i", "am", "alone", "o", "what", "a", "slave", "am", "i")
      txt2 = c("what", "do", "you", "read", "my", "lord")
-       corpusTRAIN = list(txt1, txt2)
-       names(corpusTRAIN) = c("hamlet_sample1", "polonius_sample1")
+     corpusTRAIN = list(txt1, txt2)
+     names(corpusTRAIN) = c("hamlet_sample1", "polonius_sample1")
 
      # preparing a test corpus
      txt4 = c("to", "be", "or", "not", "to", "be")
      txt5 = c("though", "this", "be", "madness", "yet", "there", "is", "method")
      txt6 = c("the", "rest", "is", "silence")
-       corpusTEST = list(txt4, txt5, txt6)
-       names(corpusTEST) = c("hamlet_sample2", "polonius_sample2", 
-                                                       "uncertain_1")
+     corpusTEST = list(txt4, txt5, txt6)
+     names(corpusTEST) = c("hamlet_sample2", "polonius_sample2", 
+              "uncertain_1")
 
      # launching the classification
      classify(training.corpus = setTRAIN, test.corpus = setTEST)
@@ -1689,7 +1738,7 @@ One can pass the features to be analyzed (e.g. MFWs) into \code{stylo()} or \cod
 
 \begin{alltt}
      my.selection.of.function.words = c("the", "and", "of", "in", "if", 
-                               "into", "within", "on", "upon", "since")
+                "into", "within", "on", "upon", "since")
      stylo(features = my.selection.of.function.words)
 \end{alltt}
 
@@ -1785,7 +1834,14 @@ Then your splitting rule might look as follows:
 
 \subsection{Splitting rule and batch mode combined}
 
-In many cases, the default functionalities provided by the library \code{stylo} can turn out to be insufficient for your needs. Then, you can prepare your own corpus using some of the functions provided by the library, then pipe it into other R functions and/or packages, and take it back to \code{stylo} after relevant modifications. Let's consider the following example in which the aforementioned custom regular expression solution was used. Suppose there is a collection of texts stored in a subdirectory "corpus". However, these texts are tagged:
+In many cases, the default functionalities provided by the 
+library \code{stylo} can turn out to be insufficient for your needs. 
+Then, you can prepare your own corpus using some of the functions provided 
+by the library, then pipe it into other R functions and/or packages, and 
+take it back to \code{stylo} after relevant modifications. Let's consider 
+the following example in which the aforementioned custom regular expression 
+solution was used. Suppose there is a collection of texts stored in a 
+subdirectory "corpus". However, these texts are tagged:
 
 \begin{alltt}
     All_NNP true_JJ histories_NNS contain_VBP instruction_NN ;_: though_RB 
@@ -1793,7 +1849,25 @@ In many cases, the default functionalities provided by the library \code{stylo} 
     find_VB ,_, and_CC when_WRB found_VBN ,_, ...
 \end{alltt}
 
-Suppose one wants do drop the lemmas and to get tags only: NNP JJ NNS VBP NN RB IN DT DT NN MD VB JJ TO VB CC WRB VBN RB... This is not supported by the library \code{stylo}, but it can be easily worked around:
+Suppose one wants do drop the lemmas and to get tags only: NNP JJ NNS VBP 
+NN RB IN DT DT NN MD VB JJ TO VB CC WRB VBN RB... It is possible to 
+extract the grammatical annotation via the function \code{parse.pos.tags()},
+using the following code:
+
+\begin{alltt}
+    # loading all input texts from the directory `corpus':
+    my.raw.data = load.corpus(files = dir(), corpus.dir = "corpus")
+    
+    # we invoke the function `parse.pos.tags'
+    my.cool.data = parse.pos.tags(my.raw.data, tagger = "stanford", 
+          feature = "pos")
+
+    # now, we launch stylo() with an argument:
+    stylo(parsed.corpus = my.cool.data)
+\end{alltt}
+
+The above function is not supported by the older versions of \code{stylo}
+(ver. <0.6.2), but it can be easily worked around:
 
 \begin{alltt}
     # loading all input texts from the directory `corpus':
@@ -1801,11 +1875,11 @@ Suppose one wants do drop the lemmas and to get tags only: NNP JJ NNS VBP NN RB 
 
     # now, it's time for some substitutions and regular expressions:
     my.slightly.better.data = lapply(my.raw.data, gsub, 
-                         pattern = "[[:alpha:],.;'-]+_", replacement="")
+              pattern = "[[:alpha:],.;'-]+_", replacement="")
     
     # to get rid of punctuation marks, another regexp might be helpful:
     my.acceptable.data = lapply(my.slightly.better.data, gsub,
-                         pattern = "[[:punct:]]+", replacement = "")
+              pattern = "[[:punct:]]+", replacement = "")
     
     # next, using the function `txt.to.words' (from the "stylo" package)
     # one can tokenize the whole corpus:
@@ -1815,17 +1889,71 @@ Suppose one wants do drop the lemmas and to get tags only: NNP JJ NNS VBP NN RB 
     stylo(parsed.corpus = my.cool.data)
 \end{alltt}
 
-Similarly, custom tables of frequencies can be build separately, and used in a form of external R objects piped into \code{stylo()}:
+Similarly, custom tables of frequencies can be build separately, and used 
+in a form of external R objects piped into \code{stylo()}:
 
 \begin{alltt}
    # external frequencies:
    my.table = make.table.of.frequencies(my.cool.data, words = c("nn",
-                                                   "jj","dt","prp") )
+         "jj","dt","prp") )
    stylo(frequencies = my.table)
 \end{alltt}
 
 
+\subsection{Custom similarity measures}\label{custom_distances}
 
+The package \code{stylo} in ver. >0.6.0 provides a socket for defining and 
+plugging in custom distance measures. Suppose you want to test the 
+Cosine Delta (or, W\"urzburg Delta) distance discussed by Jannidis, Sch\"och 
+and Pielstrom (2015). Their measures is basically a regular Cosine Distance 
+applied to \textit{z}-scored data. To use it with \code{stylo}, one has to
+prepare a custom function that will compute the distance out of table
+of frequencies. The following function does the job, even if it could be 
+slighlty optimized:
+
+
+\begin{alltt}
+    wurzburg.cosine = function(x){
+            # z-scoring the input matrix of frequencies
+            x = scale(x)
+            # computing cosine dissimilarity
+            y = as.dist( x %*% t(x) / (sqrt(rowSums(x^2) %*% t(rowSums(x^2)))) ) 
+            # then, turning it into cosine similarity
+            z = 1 - y
+            # getting the results
+            return(z)
+    }
+\end{alltt}
+
+Now, the code has to be typed (or copy-pasted) to the R console so that it 
+is visible for other functions. We are ready to use the usual functions,
+supplemented with an additional argument:
+
+\begin{alltt}
+stylo(distance.measure = "wurzburg.cosine")
+
+classify(distance.measure = "wurzburg.cosine")
+
+rolling.classify(distance.measure = "wurzburg.cosine")
+\end{alltt}
+
+Other possible applications include e.g. testing if the Entropy Distance 
+outperforms other similarity measures. The code for the similarity function
+is straightforward:
+
+\begin{alltt}
+    dist.entropy = function(x) {
+            A = t(t(x + 1) / colSums(x + 1))
+            B = t(t(log(x + 2)) / -(colSums(A * log(A))))
+            y = dist(B, method="manhattan")
+            return(y)
+    }
+
+stylo(distance.measure = "dist.entropy")
+\end{alltt}
+
+Etc. etc. The are plethora of possible distance measures. The users are 
+encouraged to examine them all!
 
 \subsection{Large-scale stylometric tests}
 
@@ -1893,8 +2021,7 @@ cat("what about another stylometric test?\symbol{92}n")
 Alexis, A., Craig, H., and Elliot, J. (2014). Language chunking, data
 sparseness, and the value of a long marker list: explorations with
 word n-grams and authorial attribution. \textit{Literary and Linguistic
-Computing}, \textbf{29}, Advanced Access published 22 May 2013 
-(doi: 10.1093/llc/fqt028).
+Computing}, \textbf{29}(2): 147--63.
 
 Argamon, S. (2008). Interpreting Burrows’s delta: geometric and probabilistic
 foundations. \textit{Literary and Linguistic Computing}, \textbf{23}(2):
@@ -1928,12 +2055,13 @@ Eder, M. (2013). Mind your corpus: systematic errors in authorship
 attribution. \textit{Literary and Linguistic Computing}, 
 \textbf{28}(4): 603--14.
 
-Eder, M. (2014). Does size matter? Authorship attribution, short samples,
-big problem. \textit{Literary and Linguistic Computing}, \textbf{29},
-Advanced Access published 14 November 2013 (doi:10.1093/llc/fqt066).
+Eder, M. (2015). Does size matter? Authorship attribution, short samples,
+big problem. \textit{Digital Scholarship in the Humanities}, \textbf{30}(2):
+167--82.
 
-Eder, M. (forthcoming). Visualization in stylometry: some problems and 
-solutions.
+Eder, M. (forthcoming). Visualization in stylometry: cluster analysis 
+using networks. \textit{Digital Scholarship in the Humanities}, 
+\textbf{30}, doi: 10.1093/llc/fqv061, in press.
 
 Eder, M. and Rybicki, J. (2011). Stylometry with R. In \textit{Digital
 Humanities 2011: Conference abstracts}. Stanford University, CA, pp.
@@ -1966,6 +2094,11 @@ University, Stanford, CA, pp. 149--51.
 Hoover, D. L. (2012). The rarer they are, the more they are, the less
 they matter. In \textit{Digital Humanities 2012: Conference Abstracts}.
 Hamburg University, Hamburg, pp. 218--21.
+
+Jannidis, F., Sch\"och, C. and Pielstrom, S. (2015). Improving Burrows’ 
+Delta – An empirical evaluation of text distance measures. In
+\textit{Digital Humanities 2015: Conference Abstracts}, 
+\url{http://dh2015.org/abstracts}.
 
 Juola, P., Noecker, J., Ryan, M., and Zhao, M. (2008). JGAAP3.0 --
 authorship attribution for the rest of us. In \textit{Digital Humanities
