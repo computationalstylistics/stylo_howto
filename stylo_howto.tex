@@ -967,11 +967,14 @@ to the number of words (features) analyzed.
 \]
 
 \item Cosine Distance: a classical measure, introduced to this package 
-quite recently.\margin{"dist.cosine"}
+in the version 6.3.\margin{"dist.cosine"}:
 
 \[
-\cos(\theta)=\frac{A\cdot B}{\|A\|\|B\|}=\frac{\sum\limits _{i=1}^{n}{A_{i}\times B_{i}}}{\sqrt{\sum\limits _{i=1}^{n}{(A_{i})^{2}}}\times\sqrt{\sum\limits _{i=1}^{n}{(A_{i})^{2}}}}
+\delta_{(AB)}=1- \frac{A\cdot B}{\|A\|\|B\|}= 1- \frac{\sum\limits _{i=1}^{n}{A_{i}B_{i}}}{\sqrt{\sum\limits _{i=1}^{n}{A_{i}^2}}\cdot\sqrt{\sum\limits _{i=1}^{n}{A_{i}^2}}}
 \]
+
+
+
 
 \item It is also possible to use any custom distance measure. This option is 
 discussed below, in the section \ref{custom_distances}.
