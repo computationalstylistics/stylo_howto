@@ -1,6 +1,6 @@
 
 
-% 2018/02/15
+% 2018/08/19
 
 
 % new features:
@@ -87,7 +87,7 @@
 
 \hrule
 \begin{abstract}
-The \code{`stylo'} package (Eder et al. 2013) provides
+The \code{`stylo'} package (Eder et al., 2013; 2016) provides
 easy-to-use implementations of various established analyses in the
 field of computational stylistics, including non-traditional authorship
 attribution, genre recognition, style development (``stylochronometry''),
@@ -246,8 +246,10 @@ over the following functions:
   \item \code{stylo()}
   \item \code{classify()} 
   \item \code{oppose()} 
-  \item \code{rolling.delta()}
+  % \item \code{rolling.delta()}
   \item \code{rolling.classify()}
+  \item \code{imposters()}
+  \item \code{crossv} 
 \end{itemize}
 
 The next sections of this manual describe these four functions together
@@ -262,15 +264,18 @@ etc. This lower-level functionality can of course be used for developing
 your own scripts and functions. These include:
 
 \begin{itemize}
-  \item \code{assign.plot.colors} 
+  \item \code{assign.plot.colors}
+  \item \code{crossv} 
   \item \code{define.plot.area} 
   \item \code{delete.markup}
   \item \code{delete.stop.words}
   \item \code{dist.argamon}
   \item \code{dist.cosine}
   \item \code{dist.delta}
+  \item \code{dist.entropy}
   \item \code{dist.eder}
   \item \code{dist.simple}
+  \item \code{dist.wurzburg} 
   \item \code{draw.polygons}
   \item \code{gui.classify} 
   \item \code{gui.oppose}
@@ -1637,7 +1642,7 @@ function for better discrimination between two groups of texts.
 
 The package ``stylo'' does not produce any networks {\it per se}, however, 
 it does generate tables of edges/nodes (or, edges alone), using two Eder's 
-algorightms of establishing connections between the nodes (Eder, forthcoming). 
+algorightms of establishing connections between the nodes (Eder, 2017). 
 The table can be loaded into Gephi (https://gephi.org). To get such a table, 
 invoke the function \code{stylo()} with an argument \code{network=TRUE}, 
 and optionally with some other arguments, as listed below. E.g.:
@@ -1672,7 +1677,7 @@ immaterial. (Default: FALSE).
 Network analysis plots might be useful for visualizing textual relations 
 in large datasets. Particular texts can be represented as nodes of a network, 
 and their explicit relations as links between these nodes (Fig. 8). 
-The procedure of linking is twofold (details: Eder, forthcoming). 
+The procedure of linking is twofold (details: Eder, 2017). 
 One of the involved algorithms computes the distances between analyzed texts, 
 and establishes, for every single node, a strong connection to its nearest 
 neighbor (i.e. the most similar text), and weaker connections to the 1st and 
@@ -1701,6 +1706,7 @@ in particular “snapshots” are added, resulting in a consensus network.
 \item \code{cv.folds}
 \item \code{encoding}
 \item \code{relative.frequencies}
+
 \end{itemize}
 
 
@@ -2061,7 +2067,7 @@ Eder, M. (2015). Does size matter? Authorship attribution, short samples,
 big problem. \textit{Digital Scholarship in the Humanities}, \textbf{30}(2):
 167--82.
 
-Eder, M. (forthcoming). Visualization in stylometry: cluster analysis 
+Eder, M. (2017). Visualization in stylometry: cluster analysis 
 using networks. \textit{Digital Scholarship in the Humanities}, 
 \textbf{30}, doi: 10.1093/llc/fqv061, in press.
 
@@ -2072,6 +2078,10 @@ Humanities 2011: Conference abstracts}. Stanford University, CA, pp.
 Eder, M., Kestemont, M. and Rybicki, J. (2013). Stylometry with R: a suite 
 of tools. In \textit{Digital Humanities 2013: Conference Abstracts}. 
 Lincoln: University of Nebraska-Lincoln, pp. 487--89.
+
+Eder, M., Rybicki, J. and Kestemont, M. (2016). Stylometry with R: a package 
+for computational text analysis. \textit{R Journal} \textbf{8}(1): 107-121.
+\url{https://journal.r-project.org/archive/2016/RJ-2016-007/index.html}.
 
 Hoover, D. L. (2002). Frequent word sequences and statistical stylistics.
 \textit{Literary and Linguistic Computing}, \textbf{17}: 157--80.
